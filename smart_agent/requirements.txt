@@ -1,0 +1,13 @@
+uvicorn
+requests
+fastapi
+openai
+pydantic==1.10.10
+python-dotenv==1.0.0
+Requests==2.31.0
+validators==0.20.0
+PyYAML
+# fastapi_session==0.1.1
+mangum
+boto3
+botocore

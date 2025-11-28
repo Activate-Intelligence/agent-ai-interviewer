@@ -1,0 +1,37 @@
+{
+  "name": "Mojito Agent Template",
+  "description": "Agent description",
+  "icon": "https://s3.amazonaws.com/flowxo-static/icons/flow.png",
+  "color": "#7c4f9c",
+  "capabilities": null,
+  "applications": [
+    "mojito"
+  ],
+  "maxThreads": 1,
+  "inputs": [
+    {
+      "name": "selectedText",
+      "type": "longText",
+      "label": "Selected Text",
+      "validation": {
+        "required": true,
+        "error": "Text is required"
+      }
+    },
+    {
+      "name": "instructions",
+      "type": "longText",
+      "label": "Prompt",
+      "validation": {
+        "required": true,
+        "error": "Prompts is required"
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "label": "result",
+      "type": "markdown"
+    }
+  ]
+}

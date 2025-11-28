@@ -1,0 +1,139 @@
+name: Deploy Agent to AWS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+
+env:
+  AWS_REGION: eu-west-2
+  FUNCTION_NAME: agent-ai-interviewer
+  S3_BUCKET: 533267084389-tf-state
+  DEPLOYMENT_TYPE: lambda
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::533267084389:role/github-oidc-agent-ai-interviewer
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set environment
+        id: set-env
+        run: |
+          if [ "${{ github.event.inputs.environment }}" != "" ]; then
+            echo "ENVIRONMENT=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          else
+            echo "ENVIRONMENT=dev" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Upload secrets to SSM Parameter Store
+        run: |
+          ENV="${{ steps.set-env.outputs.ENVIRONMENT }}"
+          PREFIX="/app/${{ env.FUNCTION_NAME }}/${ENV}"
+
+          # Upload each secret to SSM
+          aws ssm put-parameter --name "${PREFIX}/APP_PORT" --value "8000" --type "String" --overwrite || true
+          aws ssm put-parameter --name "${PREFIX}/APP_HOST" --value "0.0.0.0" --type "String" --overwrite || true
+          aws ssm put-parameter --name "${PREFIX}/ALLOW_ORIGINS" --value "${{ secrets.ALLOW_ORIGINS }}" --type "String" --overwrite || true
+          aws ssm put-parameter --name "${PREFIX}/OPENAI_API_KEY" --value "${{ secrets.OPENAI_API_KEY }}" --type "SecureString" --overwrite || true
+          aws ssm put-parameter --name "${PREFIX}/AGENT_NAME" --value "${{ env.FUNCTION_NAME }}" --type "String" --overwrite || true
+          aws ssm put-parameter --name "${PREFIX}/AGENT_TYPE" --value "daiquiri" --type "String" --overwrite || true
+          aws ssm put-parameter --name "${PREFIX}/AGENT_EXECUTE_LIMIT" --value "4" --type "String" --overwrite || true
+
+      - name: Build Lambda deployment package
+        run: |
+          # Clean up any existing package
+          rm -rf package deployment.zip
+
+          # Create package directory
+          mkdir -p package
+
+          # Install dependencies
+          pip install -r smart_agent/requirements.txt -t package/
+
+          # Copy source code
+          cp -r smart_agent package/
+          cp lambda_handler.py package/
+          cp -r Prompt package/
+
+          # Create deployment zip
+          cd package && zip -r ../deployment.zip . -x "*.pyc" -x "__pycache__/*" && cd ..
+
+          # Clean up
+          rm -rf package
+
+      - name: Upload deployment package to S3
+        run: |
+          ENV="${{ steps.set-env.outputs.ENVIRONMENT }}"
+          aws s3 cp deployment.zip s3://${{ env.S3_BUCKET }}/${{ env.FUNCTION_NAME }}/${ENV}/deployment.zip
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.0"
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: |
+          ENV="${{ steps.set-env.outputs.ENVIRONMENT }}"
+          terraform init \
+            -backend-config="key=aws/${ENV}/agents/${{ env.FUNCTION_NAME }}"
+
+      - name: Terraform Plan
+        working-directory: terraform
+        run: |
+          ENV="${{ steps.set-env.outputs.ENVIRONMENT }}"
+          terraform plan \
+            -var="function_name=${{ env.FUNCTION_NAME }}" \
+            -var="deployment_type=${{ env.DEPLOYMENT_TYPE }}" \
+            -var="s3_bucket=${{ env.S3_BUCKET }}" \
+            -var="s3_key=${{ env.FUNCTION_NAME }}/${ENV}/deployment.zip" \
+            -var="environment=${ENV}"
+
+      - name: Terraform Apply
+        working-directory: terraform
+        run: |
+          ENV="${{ steps.set-env.outputs.ENVIRONMENT }}"
+          terraform apply -auto-approve \
+            -var="function_name=${{ env.FUNCTION_NAME }}" \
+            -var="deployment_type=${{ env.DEPLOYMENT_TYPE }}" \
+            -var="s3_bucket=${{ env.S3_BUCKET }}" \
+            -var="s3_key=${{ env.FUNCTION_NAME }}/${ENV}/deployment.zip" \
+            -var="environment=${ENV}"
+
+      - name: Get API Endpoint
+        working-directory: terraform
+        run: |
+          echo "API Endpoint:"
+          terraform output -raw api_endpoint || echo "No API endpoint output"
+          echo ""
+          echo "Function URL:"
+          terraform output -raw function_url || echo "No function URL output"

@@ -1,0 +1,31 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY smart_agent/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# Copy the project (includes smart_agent and optionally Prompt)
+COPY . /app
+
+# Ensure Prompt directory exists even if not provided in context
+RUN mkdir -p /app/Prompt
+
+# Install curl for health check
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Expose the port the app runs on
+EXPOSE 8000
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV APP_PORT=8000
+ENV APP_HOST=0.0.0.0
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8000/status || exit 1
+
+# Run the application as a module to support relative imports
+CMD ["python", "-m", "smart_agent.main"]

@@ -1,0 +1,53 @@
+{
+  "name": "Old Fashioned Agent Template",
+  "description": "A good description as will be used by OF",
+  "icon": "https://images.emojiterra.com/google/noto-emoji/unicode-15.1/color/svg/1f3a4.svg",
+  "color": "#000080",
+  "capabilities": null,
+  "applications": [
+    "oldfashioned"
+  ],
+  "maxThreads": 1,
+  "inputs": [
+    {
+      "name": "instructions",
+      "type": "longText",
+      "label": "Instructions",
+      "validation": {
+        "required": true,
+        "error": "Instructions Required"
+      }
+    },
+    {
+      "name": "payload",
+      "type": "longText",
+      "label": "Additional context",
+      "validation": {
+        "required": true,
+        "error": "Payload Required"
+      }
+    },
+    {
+      "name": "threadId",
+      "type": "longText",
+      "label": "Conversation thread ID for continued interactions",
+      "validation": {
+        "required": false
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "label": "Generated Content",
+      "type": "longText"
+    },
+    {
+      "label": "AI Reasoning Summary",
+      "type": "longText"
+    },
+    {
+      "label": "Thread ID",
+      "type": "shortText"
+    }
+  ]
+}

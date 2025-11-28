@@ -1,0 +1,56 @@
+{
+  "name": "Client Discovery Interview",
+  "description": "Chatbot agent for discovering high-impact AI agent deployment opportunities in potential client organisations. Conducts text-based discovery conversations to identify where Activate Intelligence's AI agent orchestration could deliver maximum value.",
+  "icon": "https://s3.amazonaws.com/flowxo-static/icons/flow.png",
+  "color": "#4CAF50",
+  "capabilities": "Multi-turn conversational discovery for AI opportunity identification",
+  "applications": [
+    "client_discovery"
+  ],
+  "maxThreads": 1,
+  "inputs": [
+    {
+      "name": "history",
+      "label": "Conversation History (Thread ID)",
+      "type": "longText",
+      "validation": {
+        "required": false
+      }
+    },
+    {
+      "name": "output",
+      "label": "Previous Agent Response",
+      "type": "longText",
+      "validation": {
+        "required": false
+      }
+    },
+    {
+      "name": "userInput",
+      "label": "User Message",
+      "type": "longText",
+      "validation": {
+        "required": true,
+        "error": "User input is required"
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "label": "output",
+      "type": "longText"
+    },
+    {
+      "label": "isComplete",
+      "type": "boolean"
+    },
+    {
+      "label": "history",
+      "type": "longText"
+    },
+    {
+      "label": "summary",
+      "type": "longText"
+    }
+  ]
+}

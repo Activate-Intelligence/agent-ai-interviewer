@@ -1,0 +1,46 @@
+# Exclude VCS and CI
+.git
+.github
+.gitignore
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+deployment.zip
+package/
+
+# Virtual envs
+venv/
+ENV/
+env/
+
+# Terraform and infra
+terraform/
+
+# Scripts not needed in container
+scripts/
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Replit
+.replit
+.upm/
+.pythonlibs/
+replit.nix
+pyproject.toml
+poetry.lock

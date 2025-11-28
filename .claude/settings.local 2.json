@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "Bash(cp:*)",
+      "Bash(grep:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh api:*)",
+      "Bash(gh workflow list:*)",
+      "Bash(aws ecs list-clusters:*)",
+      "Bash(aws ecs list-services:*)",
+      "Bash(aws elbv2 describe-load-balancers:*)",
+      "Bash(aws route53 list-hosted-zones:*)",
+      "Bash(aws ecs describe-services:*)",
+      "Bash(aws ecs list-tasks:*)",
+      "Bash(aws ecs describe-task-definition:*)",
+      "Bash(aws logs tail:*)",
+      "Bash(aws ecs describe-tasks:*)",
+      "Bash(aws iam list-attached-role-policies:*)",
+      "Bash(aws ssm describe-parameters:*)",
+      "Bash(aws ssm get-parameters-by-path:*)",
+      "Bash(aws iam get-policy:*)"
+    ],
+    "deny": []
+  }
+}

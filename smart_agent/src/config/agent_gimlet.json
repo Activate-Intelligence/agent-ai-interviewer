@@ -1,0 +1,71 @@
+{
+  "name": "Gimlet Agent Template",
+  "description": "Template for processing content blocks",
+  "icon": "https://s3.amazonaws.com/flowxo-static/icons/flow.png",
+  "color": "#a495ed",
+  "capabilities": "Content processing and transformation",
+  "applications": [
+    "gimlet"
+  ],
+  "maxThreads": 1,
+  "inputs": [
+    {
+      "name": "collectionID",
+      "label": "Enter the collectionID",
+      "type": "longText",
+      "validation": {
+        "required": true,
+        "error": "collectionID is required"
+      }
+    },
+    {
+      "name": "blockID",
+      "label": "Enter the blockID",
+      "type": "longText",
+      "validation": {
+        "required": true,
+        "error": "BlockID is required"
+      }
+    },
+    {
+      "name": "metadata",
+      "label": "Enter the metadata",
+      "type": "longText",
+      "validation": {
+        "required": true,
+        "error": "metadata is required"
+      }
+    },
+    {
+      "name": "blockContent",
+      "label": "Enter the content of the block",
+      "type": "longText"
+    }
+  ],
+  "outputs": [
+    {
+      "label": "collectionId",
+      "type": "shortText"
+    },
+    {
+      "label": "parentBlockId",
+      "type": "shortText"
+    },
+    {
+      "label": "metadata",
+      "type": "longText"
+    },
+    {
+      "label": "blockContentOutput",
+      "type": "longText"
+    },
+    {
+      "label": "blockContentType",
+      "type": "shortText"
+    },
+    {
+      "label": "isReplace",
+      "type": "boolean"
+    }
+  ]
+}

@@ -3,7 +3,9 @@
     "allow": [
       "Bash(git init:*)",
       "Bash(git remote:*)",
-      "Bash(gh run view:*)"
+      "Bash(gh run view:*)",
+      "Bash(aws ssm get-parameter:*)",
+      "Bash(gh workflow run:*)"
     ],
     "deny": [],
     "ask": []

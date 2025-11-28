@@ -7,7 +7,7 @@
   "applications": [
     "daiquiri"
   ],
-  "maxThreads": 1,
+  "maxThreads": 10,
   "inputs": [
     {
       "name": "history",

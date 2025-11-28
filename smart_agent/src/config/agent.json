@@ -5,7 +5,7 @@
   "color": "#4CAF50",
   "capabilities": "Multi-turn conversational discovery for AI opportunity identification",
   "applications": [
-    "client_discovery"
+    "daiquiri"
   ],
   "maxThreads": 1,
   "inputs": [

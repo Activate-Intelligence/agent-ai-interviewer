@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(git init:*)",
-      "Bash(git remote:*)"
+      "Bash(git remote:*)",
+      "Bash(gh run view:*)"
     ],
     "deny": [],
     "ask": []
